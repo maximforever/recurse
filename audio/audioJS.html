@@ -1,0 +1,91 @@
+<html>
+  <head>
+    <title>sup</title>
+  </head>
+  <body>
+    <p>
+      Web Audio API
+    </p>
+    
+    <audio crossorigin="anonymous" id ="sound" src="./assets/zap.mp3"
+           type="audio/mpeg"></audio>
+    
+    
+    
+    <button data-playing="false" role="switch" aria-checked="false">
+      <span>Play/Pause</span>
+    </button>
+    
+    <input type="range" id="volume" min="0" max="2" value="1" step="0.01" />
+    
+    <script>
+    
+      // for legacy browsers
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+
+
+
+      const audioCtx = new AudioContext();
+
+
+      console.log("sup from our HTML File");
+
+      // select audio tag on the page
+      const audioElement = document.getElementById('sound');
+
+      console.log(audioElement);
+
+      // pass it into the audio context
+      const track = audioCtx.createMediaElementSource(audioElement);
+      track.connect(audioCtx.destination);
+
+
+
+    // select our play button
+    const playButton = document.querySelector('button');
+  
+      
+    const gainNode = audioCtx.createGain();
+    track.connect(gainNode).connect(audioCtx.destination);
+      
+    gainNode.gain.value = 3.4
+      
+    const volumeControl = document.querySelector('#volume');
+
+
+    // event listeners
+      
+    playButton.addEventListener('click', function() {
+
+        // check if context is in suspended state (autoplay policy)
+        if (audioCtx.state === 'suspended') {
+            audioCtx.resume();
+        }
+
+        // play or pause track depending on state
+        if (this.dataset.playing === 'false') {
+            audioElement.play();
+            this.dataset.playing = 'true';
+        } else if (this.dataset.playing === 'true') {
+            audioElement.pause();
+            this.dataset.playing = 'false';
+        }
+
+    }, false);
+
+  
+    volumeControl.addEventListener('input', function() {
+        gainNode.gain.value = this.value;
+    }, false);
+      
+
+
+    audioElement.addEventListener('ended', () => {
+      playButton.dataset.playing = 'false';
+  }, false);
+    
+    
+    </script>
+    
+  </body>
+</html>
