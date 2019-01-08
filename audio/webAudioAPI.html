@@ -1,13 +1,14 @@
 <html>
   <head>
     <title>sup</title>
+    <script src="webAudioAPI.js"></script>
   </head>
   <body>
     <p>
       Web Audio API
     </p>
     
-    <audio crossorigin="anonymous" id ="sound" src="./assets/zap.mp3"
+    <audio id ="sound" crossorigin="anonymous" src="/assets/zap.mp3"
            type="audio/mpeg"></audio>
     
     
@@ -23,11 +24,16 @@
       // for legacy browsers
       const AudioContext = window.AudioContext || window.webkitAudioContext;
 
-
-
       const audioCtx = new AudioContext();
 
-
+ // Try making an oscillator
+      const osc = audioCtx.createOscillator();
+      osc.type = 'square';
+      osc.frequency.setValueAtTime(440, audioCtx.currentTime);
+      // osc.connect(audioCtx.destination);
+      osc.start();
+      
+      
       console.log("sup from our HTML File");
 
       // select audio tag on the page
@@ -64,10 +70,13 @@
 
         // play or pause track depending on state
         if (this.dataset.playing === 'false') {
-            audioElement.play();
+            // audioElement.play();
+            osc.connect(audioCtx.destination);
             this.dataset.playing = 'true';
         } else if (this.dataset.playing === 'true') {
-            audioElement.pause();
+          osc.disconnect(audioCtx.destination);  
+          
+          //audioElement.pause();
             this.dataset.playing = 'false';
         }
 
@@ -84,6 +93,8 @@
       playButton.dataset.playing = 'false';
   }, false);
     
+      
+      //
     
     </script>
     
