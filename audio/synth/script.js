@@ -9,39 +9,73 @@ if (navigator.requestMIDIAccess) {
 }
 
 
-// key code - frequency
-var freqs = {
-  "65": 261.63,   // C
-  "83": 293.66,   // D
-  "68": 329.63,   // E
-  "70": 349.23,   // F
-  "71": 392.00,   // G
-  "72": 440.00,   // A
-  "74": 493.88,   // B
-  "75": 523.25,   // C
+var noteData = {
+  "65": {
+      freq: 261.63,
+      note: "C",
+      playing: false
+    },   
+  "83": {
+      freq: 293.66,
+      note: "D",
+      playing: false
+    },   
+  "68": {
+      freq: 329.63,
+      note: "E",
+      playing: false
+    },   
+  "70": {
+      freq: 349.23,
+      note: "F",
+      playing: false
+    },   
+  "71": {
+      freq: 392.00,
+      note: "G",
+      playing: false
+    },   
+  "72": {
+      freq: 440.00,
+      note: "A",
+      playing: false
+    },   
+  "74": {
+      freq: 493.88,
+      note: "B",
+      playing: false
+    },   
+  "75": {
+      freq: 523.25,
+      note: "C",
+      playing: false
+    },   
 
-  "87": 277.18,   // Db
-  "69": 311.13,   // Eb,
-  "84": 369.99,   // Gb
-  "89": 415.30,   // Ab
-  "85": 466.16    // Bb,
-}
-
-var notes = {
-  "65": "C",   
-  "83": "D",   
-  "68": "E",   
-  "70": "F",   
-  "71": "G",   
-  "72": "A",   
-  "74": "B",   
-  "75": "C",   
-
-  "87": "Db",   
-  "69": "Eb",   
-  "84": "Gb",
-  "89": "Ab",     
-  "85": "Bb",     
+  "87": {
+      freq: 277.18,
+      note: "Db",
+      playing: false
+    },   
+  "69": {
+      freq: 311.13,
+      note: "Eb",
+      playing: false
+    },   
+  "84": {
+      freq: 369.99,
+      note: "Gb",
+      playing: false
+    },   
+  "89": {
+      freq: 415.30,
+      note: "Ab",
+      playing: false
+    },   
+  "85": {
+      freq: 466.16,
+      note: "Bb",
+      playing: false
+    }    
 }
 
 // initialize function that runs on page launch
@@ -63,19 +97,25 @@ releaseTime = 0;
 
 function enableKeyboardKeys(){
     document.querySelector("body").addEventListener("keydown", function(e){
-      if(typeof(freqs[e.keyCode]) != "undefined"){
-          console.log(notes[e.keyCode]);
 
-          playFrequency(freqs[e.keyCode], 1);
+      // ensure that our keydown doesn't keep triggering the same note again and again
+      if(typeof(noteData[e.keyCode]) != "undefined" && !noteData[e.keyCode].playing){
+          console.log("play " + noteData[e.keyCode].note);
+          noteData[e.keyCode].playing = true;
+
+          // simulating a velocity of 127 - the loudest MIDI value
+          playFrequency(noteData[e.keyCode].freq, 127);
       }
-      
     });
 
     document.querySelector("body").addEventListener("keyup", function(e){
-      if(typeof(freqs[e.keyCode]) != "undefined"){
-          console.log(notes[e.keyCode]);
-
-          playFrequency(freqs[e.keyCode], 0);
+      if(typeof(noteData[e.keyCode]) != "undefined"){
+          console.log("stop " + noteData[e.keyCode].note);
+          noteData[e.keyCode].playing = false;
+          if(notesBeingPlayed() == 0){
+            gainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + releaseTime);
+          }
+          
       }
       
     });
@@ -105,9 +145,10 @@ const audioCtx = new AudioContext();
 
 // Try making an oscillator
 const osc = audioCtx.createOscillator();
-osc.type = 'sin';
-osc.start();
 const gainNode = audioCtx.createGain();
+osc.type = 'sawtooth';
+osc.start();
+
 
 // connect the oscillator to gain node, and the gain node to the audio context
 osc.connect(gainNode);
@@ -119,25 +160,32 @@ gainNode.gain.value = 0;
 
 function playFrequency(freq, velocity){
   
-  console.log(audioCtx.currentTime);
+  osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
 
-  if(velocity == 0){
-    //gainNode.gain.value = 0;
-    console.log(releaseTime);
-    gainNode.gain.value = 1;
-    gainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + releaseTime);
-    //gainNode.gain.value = 0;
-  } else {
-    console.log(attackTime);
-    console.log(audioCtx.currentTime + attackTime);
-    gainNode.gain.value = 0;
-    gainNode.gain.linearRampToValueAtTime(1.0, audioCtx.currentTime + attackTime);
-    //gainNode.gain.value = 1;
+
+  if(notesBeingPlayed() == 0){ 
+    gainNode.gain.value = 0
   }
 
-  osc.frequency.setValueAtTime(freq, audioCtx.currentTime); 
-  //gainNode.gain.value = velocity/127;
+  if(velocity > 0){
+    gainNode.gain.linearRampToValueAtTime(velocity/127, audioCtx.currentTime + attackTime);
+  }
 
+}
+
+function notesBeingPlayed(){
+
+  var notesPressed = 0;
+
+  for(key in noteData){
+
+    if(noteData[key].playing){
+      notesPressed++;
+    }
+  }
+
+  console.log("Notes still pressed: " + notesPressed);
+  return notesPressed;
 
 }
 
