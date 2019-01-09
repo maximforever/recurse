@@ -1,4 +1,5 @@
-Web Audio and Wed MIDI experimenting!!!
+Web Audio and Wed MIDI experimenting with [@learningned](https://github.com/learningnerd), [@jbrew](https://github.com/jbrew), [@pselle](https://github.com/pselle), and [@maximforever](https://www.github.com/maximforever)
+
 =================
 
 
