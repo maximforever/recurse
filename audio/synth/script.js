@@ -101,6 +101,8 @@ function enableKeyboardKeys(){
       // ensure that our keydown doesn't keep triggering the same note again and again
       if(typeof(noteData[e.keyCode]) != "undefined" && !noteData[e.keyCode].playing){
           console.log("play " + noteData[e.keyCode].note);
+          
+          gainNode.connect(audioCtx.destination);
           noteData[e.keyCode].playing = true;
 
           // simulating a velocity of 127 - the loudest MIDI value
@@ -113,6 +115,7 @@ function enableKeyboardKeys(){
           console.log("stop " + noteData[e.keyCode].note);
           noteData[e.keyCode].playing = false;
           if(notesBeingPlayed() == 0){
+            gainNode.gain.cancelScheduledValues(audioCtx.currentTime);
             gainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + releaseTime);
           }
           
@@ -149,6 +152,13 @@ const gainNode = audioCtx.createGain();
 osc.type = 'sawtooth';
 osc.start();
 
+setInterval(function(){
+
+  document.getElementById("current-gain").innerText = Math.floor(gainNode.gain.value*100)/100;
+}, 10)
+
+
+
 
 // connect the oscillator to gain node, and the gain node to the audio context
 osc.connect(gainNode);
@@ -159,15 +169,15 @@ gainNode.gain.value = 0;
 
 
 function playFrequency(freq, velocity){
-  
+
+  // set the pitch
   osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
 
-
-  if(notesBeingPlayed() == 0){ 
-    gainNode.gain.value = 0
-  }
+  gainNode.gain.value = 0;
 
   if(velocity > 0){
+    console.log(audioCtx.currentTime);
+    gainNode.gain.cancelScheduledValues(audioCtx.currentTime);
     gainNode.gain.linearRampToValueAtTime(velocity/127, audioCtx.currentTime + attackTime);
   }
 
@@ -189,6 +199,9 @@ function notesBeingPlayed(){
 
 }
 
+
+
+
 /*
 function onMIDISuccess(midiAccess) {
 
@@ -209,6 +222,8 @@ function getMIDIMessage(midiMessage) {
     playFrequency(freq, midiMessage.data[2]);
 }
 
+*/
+
 function codeToFrequency(code) {
     let semitoneRatio = 2 ** (1/12);
     let baselineFrequency = 27.5;
@@ -216,4 +231,8 @@ function codeToFrequency(code) {
     let stepsAboveBaseline = code - baselineCode;
     
     return baselineFrequency * (semitoneRatio ** stepsAboveBaseline);
-}*/
+}
+
+
+
+
