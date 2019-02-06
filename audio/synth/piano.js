@@ -11,7 +11,9 @@ var HEIGHT = canvas.height;
 init();                                                 
 
 function init(){
-    animationCycle = setTimeout(function(){ requestAnimationFrame(draw) }, animationSpeed);
+//    animationCycle = setTimeout(function(){ requestAnimationFrame(draw) }, animationSpeed);
+    setInterval(draw, animationSpeed);
+
 }
 
 
@@ -29,23 +31,32 @@ function drawBackground(){
 function drawKeys(){
 
     // draw white keys
+    // 8 is the stroke width set in the rect function
 
     for(var i = 0; i < 7; i++){
-        // 8 is the stroke width set in the rect function
         var xPosition = 8 + (WIDTH/7 * i);
-        rect(xPosition, 8, WIDTH/7 - 16, HEIGHT - 16, "#ffffff");
+        var notes = ["C", "D", "E", "F", "G", "A", "B"]
+        var color = keysDown[notes[i]] ? "red" : "#ffffff";
+
+        rect(xPosition, 8, WIDTH/7 - 16, HEIGHT - 16, color);
     }
 
     // Db, Eb
-    for(var j = 0; j < 2; j++){
+    for(var j = 0; j < 2; j++){  
         var xPosition = (8 + WIDTH/7/2) + (WIDTH/7 * j);
-        rect(xPosition, 8, WIDTH/7 - 16, HEIGHT/1.5 - 16, "#000000");
+        var notes = ["Db", "Eb"]
+        var color = keysDown[notes[j]] ? "red" : "#000000";
+
+        rect(xPosition, 8, WIDTH/7 - 16, HEIGHT/1.5 - 16, color);
     }
 
     // Gb, Ab, Bb
     for(var k = 0; k < 3; k++){
+        var notes = ["Gb", "Ab", "Bb"]
         var xPosition = (8 + WIDTH/7* 3 + WIDTH/7/2) + (WIDTH/7 * k);
-        rect(xPosition, 8, WIDTH/7 - 16, HEIGHT/1.5 - 16, "#000000");
+        var color = keysDown[notes[k]] ? "red" : "#000000";
+
+        rect(xPosition, 8, WIDTH/7 - 16, HEIGHT/1.5 - 16, color);
     }
 
 }
