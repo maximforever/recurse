@@ -1,0 +1,39 @@
+body {
+  background: #34283c;
+  color: #c3b4ce;
+  padding: 0;
+}
+
+.speecher {
+	display: flex;
+	flex-direction: column;
+	text-align: center;
+
+	max-width: 780px;
+	width: 90vw;
+	margin: 0 auto;
+}
+
+.game-board {
+	display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    padding: 3rem 0;
+}
+
+.one-word {
+    background: #5f4a6d;
+    box-shadow: -6px -3px 5px rgba(24, 10, 33, 0.4);
+    padding: 0.3rem 1rem;
+    margin: 0.5rem;	
+    letter-spacing: 4px;
+}
+
+.input-form input {
+	font-size: 2rem;
+	padding: 0.5rem;
+}
+
+.input-form input:focus {
+    outline: none;
+}
