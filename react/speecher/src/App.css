@@ -101,10 +101,16 @@ body {
 }
 
 .money {
-	font-size: 1.3rem;
+	font-size: 2rem;
     padding-top: 3rem;
 }
 
 .money-count {
 	color: #ffd97b;
+}
+
+.rules {
+    padding: 1rem;
+    font-size: 1.1rem;
+    line-height: 1.5;
 }

@@ -35,6 +35,13 @@ class Gameboard extends Component {
 
 			<div className="game-board">
 				<div className="money">You have <span className="money-count">${this.props.money}</span></div>
+				
+				<div className="rules">
+					You get $100 for each letter in a word you guess correctly.
+					<br/>Click on a word to buy it for $100/letter. 
+				</div>
+				
+
 				<div className="game-board-wrapper">
 					{displayWords.map((word) => {
 						let chars = "1234567890";
