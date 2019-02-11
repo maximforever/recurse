@@ -13,30 +13,40 @@ class Gameboard extends Component {
 		for(var i = 0; i < this.props.answerWords.length; i++){
 
 			let word = this.props.answerWords[i];
-			
 
-			if (!this.props.guessedWords.includes(word)){
-
-				let emptyWord = word.replace(/./g, ".");
-				displayWords.push(emptyWord)
+			if (this.props.remainingWords.includes(word)){
+				let emptyWord = {
+					display: word.replace(/./g, "_"),
+					actualWord: word
+				}
+				displayWords.push(emptyWord);
 			} else {
-				displayWords.push(word)
+				let guessedWord = {
+					display: word,
+					actualWord: word
+				}
+				displayWords.push(guessedWord);
 			}
 		}
+
+		//console.log(displayWords);
 
 		return(
 
 			<div className="game-board">
-				{displayWords.map((word) => {
-					let chars = "1234567890";
-					let id = "";
+				<div className="money">You have <span className="money-count">${this.props.money}</span></div>
+				<div className="game-board-wrapper">
+					{displayWords.map((word) => {
+						let chars = "1234567890";
+						let id = "";
 
-					for(let i = 0; i < 8; i++){
-						id += chars[Math.floor(Math.random()*chars.length)];
-					}
+						for(let i = 0; i < 8; i++){
+							id += chars[Math.floor(Math.random()*chars.length)];
+						}
 
-					return (<Word key={id} word={word} />)
-				})}
+						return (<Word key={id} handleClick={() => this.props.buyWord(word.actualWord)} word={word.display} />)
+					})}
+				</div>
 			</div>
 
 		)

@@ -14,7 +14,7 @@ body {
 	margin: 0 auto;
 }
 
-.game-board {
+.game-board-wrapper {
 	display: flex;
     justify-content: center;
     flex-wrap: wrap;
@@ -29,6 +29,20 @@ body {
     letter-spacing: 4px;
 }
 
+.one-word:hover{
+	cursor: pointer;
+}
+
+.one-word.guessed {
+	background: #65d2c8;
+    color: #085847;
+    letter-spacing: 3px;
+}
+
+.one-word.guessed:hover {
+	cursor: initial;
+}
+
 .input-form input {
 	font-size: 2rem;
 	padding: 0.5rem;
@@ -36,4 +50,61 @@ body {
 
 .input-form input:focus {
     outline: none;
+}
+
+.author-button {
+    padding: 0.6rem 1rem;
+    background: #ffd97b;
+    color: #211602;
+    margin: 0 0.5rem;
+    font-size: 0.9rem;
+    border: none;
+    border-radius: 0.2rem;
+}
+
+.author-button:hover {
+	background: #ef9025;
+	cursor: pointer;
+}
+
+.victory-message  {
+	color: #ffd97b;
+}
+
+.quote-wrapper {
+	border: 2px solid #ffd97b;
+    padding: 2rem 1rem;
+    border-radius: 0.6rem;
+}
+
+.quote {
+    font-style: italic;
+    font-weight: 300;
+    font-size: 2.5rem;
+    margin: 0 0 1rem 0;
+}
+
+.quote-author {
+	font-style: italic;
+    font-size: 1.2rem;
+    margin: 0;
+}
+
+.victory-message-hooray {
+	color: #c3b4ce;
+	padding: 0.5rem 0;
+}
+
+.fa-star {
+	color: #ff7a00;
+	margin: 0 0.5rem;
+}
+
+.money {
+	font-size: 1.3rem;
+    padding-top: 3rem;
+}
+
+.money-count {
+	color: #ffd97b;
 }
