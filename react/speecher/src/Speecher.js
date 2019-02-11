@@ -29,7 +29,7 @@ class Speecher extends Component {
   		if(this.state.remainingWords.includes(guess) && this.state.answerWords.includes(guess)){
   			// used guessed a word!
   			let remainingWords = this.state.remainingWords.slice();
-  			
+
   			remainingWords = remainingWords.filter((word) => {
   				return word !== guess
   			});
@@ -180,7 +180,7 @@ class Speecher extends Component {
 
 		return(
 			<div className="speecher">
-				<h1><i className="fas fa-microphone-alt"></i> Speecher</h1>
+				<h1><i className="fas fa-microphone-alt"></i> Say What!?</h1>
 				{/*<p>{this.state.answer.body}</p>*/}
 				
 				{gameboard}
