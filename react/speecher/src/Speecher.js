@@ -9,16 +9,19 @@ class Speecher extends Component {
 
   	constructor(props){
     	super(props);
-    	let randomQuote = this.selectRandomQuote();
+    	
     	this.state = {
     		money: 1000,
     		allWordsGuessed: false,
     		authorGuessed: false,
       		currentGuess: "",
-     		answer: randomQuote,
-     		answerWords: randomQuote.body.split(" "),
-     		remainingWords: this.stripPunctuation(randomQuote.body)
+      		answer: "",
+      		answerWords: [],
+      		remainingWords: []
     	}
+
+    	this.selectRandomQuote();
+
   	}
 
 
@@ -55,18 +58,79 @@ class Speecher extends Component {
     	
   	}
 
+
+  	separatePunctuation(quote){
+
+  		let editedQuote = [];
+		let newQuote = quote.split(" ");
+		let chars = [".", ",", "!", "?", ":", ";"];
+
+		for(var i = 0; i < newQuote.length; i++){
+			let word = newQuote[i];
+			let lastLetter = word[word.length - 1];
+			if(chars.indexOf(lastLetter) !== -1){
+				editedQuote.push(word.substring(0, word.length - 1), lastLetter)
+			} else {
+				editedQuote.push(word);
+			}
+		}
+
+		return editedQuote;
+  	}
+
   	stripPunctuation(quote){
-  		let quoteArray = quote.split(" ");
-  		let chars = ".-,:?!";
-  		let charArray =  chars.split("");
+
+  		let chars = [".", ",", "!", "?", ":", ";"];
+	  	let quoteArray = this.separatePunctuation(quote);
 
   		return quoteArray.filter((word) => {
-  			return !charArray.includes(word)
+  			return !chars.includes(word)
   		})
+
+
   	}
 
   	selectRandomQuote(){
-    	return quoteLibrary[Math.floor((Math.random()*quoteLibrary.length))]
+    	
+  		fetch('http://quotes.rest/qod/categories.json')
+  		.then(res => res.json())
+  		.then(jres => {
+  			let categories = Object.keys(jres.contents.categories);
+  			let randomCategory = categories[Math.floor(Math.random() * categories.length)];
+
+  			return randomCategory;
+  		})
+  		.then(randomCategory => {
+  			let url = `http://quotes.rest/qod.json?category=${randomCategory}`;
+  			console.log(url);
+  			return fetch(url)
+  		}) 
+		.then(res => res.json())
+		.then(jres => {
+  			console.log(jres.contents.quotes[0].quote);
+
+
+
+  			const quote = {
+  				"body": jres.contents.quotes[0].quote.replace(/’/gi, "'"),
+  				"author": jres.contents.quotes[0].author,
+  				"category": jres.contents.quotes[0].category
+  			}
+
+			 this.setState({
+	    		answer: quote,
+	     		answerWords: this.separatePunctuation(quote.body),
+	     		remainingWords: this.stripPunctuation(quote.body)
+	    	})
+
+  		})
+  		
+  		.catch(err => {
+  			console.log("looks like there's an issue...");
+  			console.log(err);
+  			this.selectRandomQuote()
+  		})
+    	
   	}
 
   	prepareAnswers(answer, array, numberOfChoices){
@@ -125,12 +189,19 @@ class Speecher extends Component {
   	}
 
   	renderGameboard(){
-  		return(<Gameboard 
-			money={this.state.money} 
-			answerWords={this.state.answerWords} 
-			remainingWords={this.state.remainingWords} 
-			buyWord={(word) => this.buyWord(word)}
-		/>)
+
+  		if(this.state.answer.length === 0){
+  			return <p>Loading...</p>
+  		} else {
+  			return(<Gameboard 
+				money={this.state.money} 
+				category={this.state.answer.category} 
+				answerWords={this.state.answerWords} 
+				remainingWords={this.state.remainingWords} 
+				buyWord={(word) => this.buyWord(word)}
+			/>)
+  		}
+  		
   	}
 
   	renderQuoteGuess(){
@@ -156,9 +227,9 @@ class Speecher extends Component {
   		return(
   			<div className="victory-message">
 	  			<h1>
-	  				<i class="fas fa-star"></i>
-	  				<i class="fas fa-star"></i>
-	  				<i class="fas fa-star"></i>
+	  				<i className="fas fa-star"></i>
+	  				<i className="fas fa-star"></i>
+	  				<i className="fas fa-star"></i>
 	  				<div className="victory-message-hooray">You got it!</div>
 	  			</h1>
 	  			
@@ -182,7 +253,7 @@ class Speecher extends Component {
 			<div className="speecher">
 				<h1><i className="fas fa-microphone-alt"></i> Say What!?</h1>
 				{/*<p>{this.state.answer.body}</p>*/}
-				
+
 				{gameboard}
 				{guessInput}
 				{authorGuessSection}
@@ -194,51 +265,6 @@ class Speecher extends Component {
 
 }
 
-
-
-// some seed quotes for testing
-
-let quoteLibrary = [
-  {
-    body: "In three words I can sum up everything I've learned about life : it goes on",
-    author: "Robert Frost"
-  },
-  {
-    body: "The irony of commitment is that it's deeply liberating - in work, in play, in love",
-    author: "Anne Morris"
-  },
-
-  {
-    body: "Do what you feel in your heart to be right - for you'll be criticized anyway",
-    author: "Eleanor Roosevelt"
-  },
-
-  {
-    body: "Life is a succession of lessons which must be lived to be understood",
-    author: "Ralph Waldo Emerson"
-  },
-
-  {
-    body: "Life is a succession of lessons which must be lived to be understood",
-    author: "Ralph Waldo Emerson"
-  },
-
-  {
-    body: "Life is a succession of lessons which must be lived to be understood",
-    author: "Ralph Waldo Emerson"
-  },
-
-  {
-    body: "The secret of getting ahead is getting started",
-    author: "Mark Twain"
-  },
-
-  {
-    body: "Try to be a rainbow in someone's cloud",
-    author: "Maya Angelou"
-  }
-
-]
 
 
 export default Speecher;
