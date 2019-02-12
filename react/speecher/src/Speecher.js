@@ -92,7 +92,7 @@ class Speecher extends Component {
 
   	selectRandomQuote(){
     	
-  		fetch('http://quotes.rest/qod/categories.json')
+  		fetch('https://quotes.rest/qod/categories.json')
   		.then(res => res.json())
   		.then(jres => {
   			let categories = Object.keys(jres.contents.categories);
@@ -101,7 +101,7 @@ class Speecher extends Component {
   			return randomCategory;
   		})
   		.then(randomCategory => {
-  			let url = `http://quotes.rest/qod.json?category=${randomCategory}`;
+  			let url = `https://quotes.rest/qod.json?category=${randomCategory}`;
   			console.log(url);
   			return fetch(url)
   		}) 
@@ -128,7 +128,7 @@ class Speecher extends Component {
   		.catch(err => {
   			console.log("looks like there's an issue...");
   			console.log(err);
-  			this.selectRandomQuote()
+	  		// this.selectRandomQuote()		// this is just... asking for trouble.
   		})
     	
   	}
@@ -249,10 +249,12 @@ class Speecher extends Component {
 		let authorGuessSection = (this.state.allWordsGuessed && !this.state.authorGuessed) ? this.renderAuthorGuess() : null;
 		let victoryMessage = (this.state.allWordsGuessed && this.state.authorGuessed) ? this.renderVictoryMessage() : null;
 
+		// is this the best way to conditionally render a bunch of sections?
+
 		return(
 			<div className="speecher">
 				<h1><i className="fas fa-microphone-alt"></i> Say What!?</h1>
-				{/*<p>{this.state.answer.body}</p>*/}
+				
 
 				{gameboard}
 				{guessInput}

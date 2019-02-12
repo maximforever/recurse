@@ -1,6 +1,8 @@
 {
   "name": "speecher",
   "version": "0.1.0",
+  "description": "a small fullstack react/express app",
+  "main": "index.js",
   "private": true,
   "dependencies": {
     "express": "^4.16.4",
