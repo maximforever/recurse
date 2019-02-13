@@ -16,10 +16,11 @@ class Speecher extends Component {
     		money: 1000,
     		allWordsGuessed: false,
     		authorGuessed: false,
-      		currentGuess: "",
-      		answer: "",
-      		answerWords: [],
-      		remainingWords: []
+    		currentGuess: "",
+    		answer: "",
+    		answerWords: [],
+    		remainingWords: [],
+        error: ""
     	}
 
     	this.selectRandomQuote();
@@ -94,6 +95,9 @@ class Speecher extends Component {
 
   	selectRandomQuote(){
     	
+
+      this.state.error = "";
+
   		fetch('http://quotes.rest/qod/categories.json')
   		.then(res => res.json())
   		.then(jres => {
@@ -130,10 +134,28 @@ class Speecher extends Component {
   		.catch(err => {
   			console.log("looks like there's an issue...");
   			console.log(err);
+        //this.state.error = err;
 	  		// this.selectRandomQuote()		// this is just... asking for trouble.
+        
+        // the API has a limit of 10 requests an hour, which is not great. 
+        // So, if this fails, I should set a quote from a local backup
+
+        this.getLocalQuote();
+
   		})
     	
   	}
+
+    getLocalQuote(){
+      let quote = quoteLibrary[Math.floor((Math.random()*quoteLibrary.length))];
+
+      this.setState({
+          category: "General",
+          answer: quote,
+          answerWords: this.separatePunctuation(quote.body),
+          remainingWords: this.stripPunctuation(quote.body)
+      })
+    }
 
   	prepareAnswers(answer, array, numberOfChoices){
 
@@ -194,7 +216,14 @@ class Speecher extends Component {
 
   		if(this.state.answer.length === 0){
   			return <p>Loading...</p>
-  		} else {
+  		} else if (this.state.error.length){
+        return (
+          <div className = "error">
+            <p>Looks like something went wrong - try again in an hour!</p>
+            <pre>{this.state.error}</pre>
+          </div>
+        )
+      } else {
   			return(<Gameboard 
 				money={this.state.money} 
 				category={this.state.answer.category} 
@@ -268,6 +297,51 @@ class Speecher extends Component {
 	}
 
 }
+
+// some seed quotes for testing
+
+let quoteLibrary = [
+  {
+    body: "In three words I can sum up everything I've learned about life : it goes on",
+    author: "Robert Frost"
+  },
+  {
+    body: "The irony of commitment is that it's deeply liberating - in work, in play, in love",
+    author: "Anne Morris"
+  },
+
+  {
+    body: "Do what you feel in your heart to be right - for you'll be criticized anyway",
+    author: "Eleanor Roosevelt"
+  },
+
+  {
+    body: "Life is a succession of lessons which must be lived to be understood",
+    author: "Ralph Waldo Emerson"
+  },
+
+  {
+    body: "Life is a succession of lessons which must be lived to be understood",
+    author: "Ralph Waldo Emerson"
+  },
+
+  {
+    body: "Life is a succession of lessons which must be lived to be understood",
+    author: "Ralph Waldo Emerson"
+  },
+
+  {
+    body: "The secret of getting ahead is getting started",
+    author: "Mark Twain"
+  },
+
+  {
+    body: "Try to be a rainbow in someone's cloud",
+    author: "Maya Angelou"
+  }
+
+]
+
 
 
 
