@@ -92,7 +92,7 @@ class Speecher extends Component {
 
   	selectRandomQuote(){
     	
-  		fetch('https://quotes.rest/qod/categories.json')
+  		fetch('http://quotes.rest/qod/categories.json')
   		.then(res => res.json())
   		.then(jres => {
   			let categories = Object.keys(jres.contents.categories);
@@ -101,7 +101,7 @@ class Speecher extends Component {
   			return randomCategory;
   		})
   		.then(randomCategory => {
-  			let url = `https://quotes.rest/qod.json?category=${randomCategory}`;
+  			let url = `http://quotes.rest/qod.json?category=${randomCategory}`;
   			console.log(url);
   			return fetch(url)
   		}) 
