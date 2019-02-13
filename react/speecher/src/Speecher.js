@@ -1,3 +1,5 @@
+// main game component
+
 import React, { Component } from 'react';
 
 import Gameboard from './Gameboard'
