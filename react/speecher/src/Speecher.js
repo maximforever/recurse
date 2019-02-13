@@ -111,31 +111,31 @@ class Speecher extends Component {
   			console.log(url);
   			return fetch(url)
   		}) 
-		.then(res => res.json())
-		.then(jres => {
-  			console.log(jres.contents.quotes[0].quote);
+  		.then(res => res.json())
+  		.then(jres => {
+    			console.log(jres.contents.quotes[0].quote);
 
 
 
-  			const quote = {
-  				"body": jres.contents.quotes[0].quote.replace(/’/gi, "'"),
-  				"author": jres.contents.quotes[0].author,
-  				"category": jres.contents.quotes[0].category
-  			}
+    			const quote = {
+    				"body": jres.contents.quotes[0].quote.replace(/’/gi, "'"),
+    				"author": jres.contents.quotes[0].author,
+    				"category": jres.contents.quotes[0].category
+    			}
 
-			 this.setState({
-	    		answer: quote,
-	     		answerWords: this.separatePunctuation(quote.body),
-	     		remainingWords: this.stripPunctuation(quote.body)
-	    	})
+  			 this.setState({
+  	    		answer: quote,
+  	     		answerWords: this.separatePunctuation(quote.body),
+  	     		remainingWords: this.stripPunctuation(quote.body)
+  	    	})
 
-  		})
-  		
+    	})
+    		
   		.catch(err => {
   			console.log("looks like there's an issue...");
   			console.log(err);
         //this.state.error = err;
-	  		// this.selectRandomQuote()		// this is just... asking for trouble.
+    		// this.selectRandomQuote()		// this is just... asking for trouble.
         
         // the API has a limit of 10 requests an hour, which is not great. 
         // So, if this fails, I should set a quote from a local backup
@@ -148,9 +148,9 @@ class Speecher extends Component {
 
     getLocalQuote(){
       let quote = quoteLibrary[Math.floor((Math.random()*quoteLibrary.length))];
+      quote["category"] = "General";
 
       this.setState({
-          category: "General",
           answer: quote,
           answerWords: this.separatePunctuation(quote.body),
           remainingWords: this.stripPunctuation(quote.body)
