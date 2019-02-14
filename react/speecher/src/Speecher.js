@@ -65,47 +65,51 @@ class Speecher extends Component {
   	separatePunctuation(quote){
 
   		let editedQuote = [];
-		let newQuote = quote.split(" ");
-		let chars = [".", ",", "!", "?", ":", ";"];
+		  let newQuote = quote.split(" ");
+		  let chars = [".", ",", "!", "?", ":", ";"];
 
-		for(var i = 0; i < newQuote.length; i++){
-			let word = newQuote[i];
-			let lastLetter = word[word.length - 1];
-			if(chars.indexOf(lastLetter) !== -1){
-				editedQuote.push(word.substring(0, word.length - 1), lastLetter)
-			} else {
-				editedQuote.push(word);
-			}
-		}
+  		for(var i = 0; i < newQuote.length; i++){
+  			let word = newQuote[i];
+  			let lastLetter = word[word.length - 1];
+  			if(chars.indexOf(lastLetter) !== -1){
+  				editedQuote.push(word.substring(0, word.length - 1), lastLetter)
+  			} else {
+  				editedQuote.push(word);
+  			}
+  		}
 
-		return editedQuote;
+		  return editedQuote;
   	}
 
   	stripPunctuation(quote){
 
-  		let chars = [".", ",", "!", "?", ":", ";"];
+  		let chars = [".", ",", "!", "?", ":", ";", "-"];
 	  	let quoteArray = this.separatePunctuation(quote);
 
   		return quoteArray.filter((word) => {
   			return !chars.includes(word)
   		})
 
-
   	}
 
   	selectRandomQuote(){
-    	
-
-      this.state.error = "";
 
   		fetch('http://quotes.rest/qod/categories.json')
-  		.then(res => res.json())
+      .then(res => {
+        console.log(res.status);
+        if (res.status === 200) {
+          return res.json();
+        } else {
+          return this.getLocalQuote();
+        }
+      })
   		.then(jres => {
+
   			let categories = Object.keys(jres.contents.categories);
   			let randomCategory = categories[Math.floor(Math.random() * categories.length)];
 
   			return randomCategory;
-  		})
+      })
   		.then(randomCategory => {
   			let url = `http://quotes.rest/qod.json?category=${randomCategory}`;
   			console.log(url);
@@ -114,8 +118,6 @@ class Speecher extends Component {
   		.then(res => res.json())
   		.then(jres => {
     			console.log(jres.contents.quotes[0].quote);
-
-
 
     			const quote = {
     				"body": jres.contents.quotes[0].quote.replace(/’/gi, "'"),
@@ -129,14 +131,10 @@ class Speecher extends Component {
   	     		remainingWords: this.stripPunctuation(quote.body)
   	    	})
 
-    	})
-    		
+    	})	
   		.catch(err => {
   			console.log("looks like there's an issue...");
   			console.log(err);
-        //this.state.error = err;
-    		// this.selectRandomQuote()		// this is just... asking for trouble.
-        
         // the API has a limit of 10 requests an hour, which is not great. 
         // So, if this fails, I should set a quote from a local backup
 
@@ -268,6 +266,8 @@ class Speecher extends Component {
 	  				<h3 className="quote">{this.state.answer.body}</h3>
 	  				<h4 className="quote-author">~ {this.state.answer.author}</h4>
 	  			</div>
+
+          <a href ="/"><button className="again">Try Another</button></a>
 	  		</div>
   		)
   	}
@@ -302,7 +302,7 @@ class Speecher extends Component {
 
 let quoteLibrary = [
   {
-    body: "In three words I can sum up everything I've learned about life : it goes on",
+    body: "In three words I can sum up everything I've learned about life: it goes on",
     author: "Robert Frost"
   },
   {

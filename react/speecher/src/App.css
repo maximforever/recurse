@@ -56,7 +56,7 @@ body {
     outline: none;
 }
 
-.author-button {
+.again, .author-button {
     padding: 0.6rem 1rem;
     background: #ffd97b;
     color: #211602;
@@ -66,9 +66,20 @@ body {
     border-radius: 0.2rem;
 }
 
-.author-button:hover {
+.again:hover, .author-button:hover {
 	background: #ef9025;
 	cursor: pointer;
+}
+
+.again {
+    background: #c3b4ce;
+    font-size: 2rem;
+    padding: 1rem 3rem;
+    margin-top: 3rem;
+}
+
+.again:hover {
+    background: #b887dc;
 }
 
 .victory-message  {
