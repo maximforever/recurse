@@ -1,14 +1,12 @@
-// main game component
-
 import React, { Component } from 'react';
 
 import Gameboard from './Gameboard'
 import InputForm from './InputForm'
 import AuthorGuesser from './AuthorGuesser'
+import VictoryMessage from './VictoryMessage';
 
 
 class Speecher extends Component {
-
   	constructor(props){
     	super(props);
     	
@@ -156,30 +154,15 @@ class Speecher extends Component {
     }
 
   	prepareAnswers(answer, array, numberOfChoices){
-
   		if(numberOfChoices > (array + 1)){
-  			console.log("Can't have more choices than options");
   			return null;
   		}
 
-  		let incorrectChoices = array.slice();			// make a copy of the array so we don't mutate the state
   		let correctAnswerIndex = Math.floor(Math.random() * numberOfChoices);
-
-  		let selectedAnswers = [];
-
-  		for(let i = 0; i < numberOfChoices; i++){
-  			if(i === correctAnswerIndex){
-  				selectedAnswers.push(answer);
-  			} else {
-  				let randomAnswerIndex = Math.floor(Math.random() * incorrectChoices.length);
-  				selectedAnswers.push(incorrectChoices[randomAnswerIndex]);
-  				incorrectChoices.splice(randomAnswerIndex, 1);		// remove choice from array
-  			}
-  		}
-
-
-
-  		return selectedAnswers;
+        const randomShuffle = arr => return arr.sort(() => 0.5 - Math.random());
+        let answers = randomShuffle(array.slice()).slice(numberOfChoices - 1);
+        answers.splice(correctAnswerIndex, 0, answer);
+        return answers;
   	}
 
   	buyWord(word){
@@ -252,46 +235,20 @@ class Speecher extends Component {
   		)
   	}
 
-  	renderVictoryMessage(){
-  		return(
-  			<div className="victory-message">
-	  			<h1>
-	  				<i className="fas fa-star"></i>
-	  				<i className="fas fa-star"></i>
-	  				<i className="fas fa-star"></i>
-	  				<div className="victory-message-hooray">You got it!</div>
-	  			</h1>
-	  			
-	  			<div className="quote-wrapper">
-	  				<h3 className="quote">{this.state.answer.body}</h3>
-	  				<h4 className="quote-author">~ {this.state.answer.author}</h4>
-	  			</div>
-
-          <a href ="/"><button className="again">Try Another</button></a>
-	  		</div>
-  		)
-  	}
-
-
-	render(){
-
-		let gameboard = (!this.state.authorGuessed) ? this.renderGameboard() : null;
-		let guessInput = (!this.state.allWordsGuessed && !this.state.authorGuessed) ? this.renderQuoteGuess() : null;
-		let authorGuessSection = (this.state.allWordsGuessed && !this.state.authorGuessed) ? this.renderAuthorGuess() : null;
-		let victoryMessage = (this.state.allWordsGuessed && this.state.authorGuessed) ? this.renderVictoryMessage() : null;
-
-		// is this the best way to conditionally render a bunch of sections?
+	render() {
+        const { authorGuessed, allWordsGuessed, answer } = this.state;
+		let gameboard = (!authorGuessed) ? this.renderGameboard() : null;
+		let guessInput = (!allWordsGuessed && !authorGuessed) ? this.renderQuoteGuess() : null;
+		let authorGuessSection = (allWordsGuessed && !authorGuessed) ? this.renderAuthorGuess() : null;
+        let victoryMessage = (allWordsGuessed && authorGuessed) ? <VictoryMessage answer={answer} shouldRender={allWordsGuessed && authorGuessed} /> : null;
 
 		return(
 			<div className="speecher">
 				<h1><i className="fas fa-microphone-alt"></i> Say What!?</h1>
-				
-
 				{gameboard}
 				{guessInput}
 				{authorGuessSection}
 				{victoryMessage}
-				
 			</div>
 		);
 	}
@@ -300,7 +257,7 @@ class Speecher extends Component {
 
 // some seed quotes for testing
 
-let quoteLibrary = [
+const quoteLibrary = [
   {
     body: "In three words I can sum up everything I've learned about life: it goes on",
     author: "Robert Frost"
@@ -339,7 +296,6 @@ let quoteLibrary = [
     body: "Try to be a rainbow in someone's cloud",
     author: "Maya Angelou"
   }
-
 ]
 
 
