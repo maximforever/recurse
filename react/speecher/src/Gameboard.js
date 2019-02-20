@@ -45,15 +45,8 @@ class Gameboard extends Component {
 				</div>
 
 				<div className="game-board-wrapper">
-					{displayWords.map((word) => {
-						let chars = "1234567890";
-						let id = "";
-
-						for(let i = 0; i < 8; i++){
-							id += chars[Math.floor(Math.random()*chars.length)];
-						}
-
-						return (<Word key={id} handleClick={() => this.props.buyWord(word.actualWord)} word={word.display} />)
+					{displayWords.map((word, idx) => {
+						return (<Word key={idx} handleClick={() => this.props.buyWord(word.actualWord)} word={word.display} />)
 					})}
 				</div>
 			</div>
